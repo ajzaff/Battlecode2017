@@ -20,6 +20,9 @@ client:
 .PHONY: \
 	clean \
 	run \
+	sim \
 	play \
+	report \
+	archive \
 	jar \
 	client
