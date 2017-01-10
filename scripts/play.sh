@@ -28,7 +28,7 @@ play() {
 
 	echo
 	echo "#########################################"
-	echo "${team_a} vs. ${team_b} on ${map}"
+	echo "${team_a} vs. ${team_b} on ${map_list}"
 	echo "#########################################"
 	echo
 
