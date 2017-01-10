@@ -2,6 +2,10 @@ clean:
 	bash gradlew clean
 run:
 	bash gradlew run
+sim: \
+	play \
+	report \
+	archive
 play:
 	bash scripts/play.sh
 report:
