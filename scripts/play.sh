@@ -53,6 +53,6 @@ elif [ "$#" = 2 ] ; then
 	play "$1" "$2" "$map_list"
 	play "$2" "$1" "$map_list"
 elif [ "$#" = 3 ] ; then
-	play "$1" "$2" "$3" "$map_list"
-	play "$2" "$1" "$3" "$map_list"
+	play "$1" "$2" "$3"
+	play "$2" "$1" "$3"
 fi
