@@ -7,6 +7,8 @@ play:
 report:
 	mkdir -p reports
 	python scripts/report.py
+archive:
+	bash scripts/archive.sh
 jar:
 	bash gradlew jarForUpload
 client:
