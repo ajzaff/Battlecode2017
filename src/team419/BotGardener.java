@@ -59,7 +59,7 @@ final strictfp class BotGardener extends Navigation {
             r = LUMBERJACK;
         } else if (roundNum % 40 == 3 && rc.hasRobotBuildRequirements(SOLDIER)) {
             r = SOLDIER;
-        } else if (roundNum % 50 == 5 && rc.hasRobotBuildRequirements(SCOUT)) {
+        } else if (roundNum % 60 == 5 && rc.hasRobotBuildRequirements(SCOUT)) {
             r = SCOUT;
         } else if (roundNum % 50 == 31 && rc.hasRobotBuildRequirements(TANK)) {
             r = TANK;
