@@ -1,6 +1,9 @@
 package team419;
 
-import battlecode.common.*;
+import battlecode.common.Clock;
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.TreeInfo;
 
 import static battlecode.common.RobotType.GARDENER;
 import static battlecode.common.Team.NEUTRAL;

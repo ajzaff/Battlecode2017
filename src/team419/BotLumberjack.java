@@ -2,7 +2,6 @@ package team419;
 
 import battlecode.common.Clock;
 import battlecode.common.GameActionException;
-import battlecode.common.Team;
 import battlecode.common.TreeInfo;
 
 import static battlecode.common.Team.NEUTRAL;

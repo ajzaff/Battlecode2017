@@ -1,6 +1,7 @@
 package team419;
 
 import battlecode.common.*;
+import battlecode.common.RobotType;
 
 import static battlecode.common.RobotType.*;
 import static battlecode.common.Team.NEUTRAL;
