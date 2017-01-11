@@ -2,6 +2,9 @@ package team419;
 
 import battlecode.common.Clock;
 import battlecode.common.GameActionException;
+import battlecode.common.TreeInfo;
+
+import static battlecode.common.Team.NEUTRAL;
 
 final strictfp class BotTank extends Navigation {
 
@@ -28,10 +31,29 @@ final strictfp class BotTank extends Navigation {
     }
 
     private static void act() throws GameActionException {
+        GameState.senseNearbyTrees();
+        tryShakeNearbyTree();
         if (Navigation.tryMoveInDirection(myDir)) {
             return;
         } else {
             myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
         }
+    }
+
+    private static boolean tryShakeNearbyTree() throws GameActionException {
+        if (!rc.canShake())
+            return false;
+
+        TreeInfo bestTree = null;
+        for(TreeInfo t : nearbyTrees)
+            if (t.team == NEUTRAL && rc.canShake(t.location))
+                if (bestTree == null)
+                    bestTree = t;
+                else if (t.getContainedBullets() > bestTree.getContainedBullets())
+                    bestTree = t;
+        if (bestTree == null)
+            return false;
+        rc.shake(bestTree.location);
+        return true;
     }
 }

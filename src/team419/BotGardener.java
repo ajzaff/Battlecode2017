@@ -3,6 +3,7 @@ package team419;
 import battlecode.common.*;
 
 import static battlecode.common.RobotType.*;
+import static battlecode.common.Team.NEUTRAL;
 
 final strictfp class BotGardener extends Navigation {
 
@@ -31,6 +32,7 @@ final strictfp class BotGardener extends Navigation {
     private static void act() throws GameActionException {
         tryBuildRobot();
         GameState.senseNearbyTrees();
+        tryShakeNearbyTree();
         if (tryPlantTreeRandom()) {
             GameState.senseNearbyFriends();
             tryWaterNearbyTrees();
@@ -143,5 +145,20 @@ final strictfp class BotGardener extends Navigation {
         return false;
     }
 
+    private static boolean tryShakeNearbyTree() throws GameActionException {
+        if (!rc.canShake())
+            return false;
 
+        TreeInfo bestTree = null;
+        for(TreeInfo t : nearbyTrees)
+            if (t.team == NEUTRAL && rc.canShake(t.location))
+                if (bestTree == null)
+                    bestTree = t;
+                else if (t.getContainedBullets() > bestTree.getContainedBullets())
+                    bestTree = t;
+        if (bestTree == null)
+            return false;
+        rc.shake(bestTree.location);
+        return true;
+    }
 }

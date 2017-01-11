@@ -1,10 +1,9 @@
 package team419;
 
-import battlecode.common.Clock;
-import battlecode.common.Direction;
-import battlecode.common.GameActionException;
+import battlecode.common.*;
 
 import static battlecode.common.RobotType.GARDENER;
+import static battlecode.common.Team.NEUTRAL;
 
 final strictfp class BotArchon extends Navigation {
 
@@ -34,6 +33,8 @@ final strictfp class BotArchon extends Navigation {
 
     private static void act() throws GameActionException {
         tryDonateBullets();
+        GameState.senseNearbyTrees();
+        tryShakeNearbyTree();
         if (roundNum % 20 == 0) {
             tryHireGardener();
         }
@@ -82,5 +83,22 @@ final strictfp class BotArchon extends Navigation {
             dir = dir.rotateLeftRads(Navigation.EIGHTH_TURN);
         }
         return false;
+    }
+
+    private static boolean tryShakeNearbyTree() throws GameActionException {
+        if (!rc.canShake())
+            return false;
+
+        TreeInfo bestTree = null;
+        for(TreeInfo t : nearbyTrees)
+            if (t.team == NEUTRAL && rc.canShake(t.location))
+                if (bestTree == null)
+                    bestTree = t;
+                else if (t.getContainedBullets() > bestTree.getContainedBullets())
+                    bestTree = t;
+        if (bestTree == null)
+            return false;
+        rc.shake(bestTree.location);
+        return true;
     }
 }
