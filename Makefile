@@ -8,6 +8,8 @@ sim: \
 	archive
 play:
 	bash scripts/play.sh
+playOffline:
+	bash scripts/playOffline.sh
 report:
 	mkdir -p reports
 	python scripts/report.py
@@ -22,6 +24,7 @@ client:
 	run \
 	sim \
 	play \
+	playOffline \
 	report \
 	archive \
 	jar \
