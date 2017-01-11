@@ -29,9 +29,7 @@ final strictfp class BotGardener extends Navigation {
     }
 
     private static void act() throws GameActionException {
-        if (tryBuildRobot()) {
-            return;
-        }
+        tryBuildRobot();
         GameState.senseNearbyTrees();
         if (tryPlantTreeRandom()) {
             GameState.senseNearbyFriends();

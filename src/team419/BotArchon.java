@@ -34,8 +34,8 @@ final strictfp class BotArchon extends Navigation {
 
     private static void act() throws GameActionException {
         tryDonateBullets();
-        if (roundNum % 20 == 0 && tryHireGardener()) {
-            return;
+        if (roundNum % 20 == 0) {
+            tryHireGardener();
         }
         if (Navigation.tryMoveInDirection(myDir)) {
             return;
