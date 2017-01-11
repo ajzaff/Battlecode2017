@@ -7,24 +7,26 @@ public final strictfp class RobotPlayer {
 
     @SuppressWarnings("unused")
     public static void run(RobotController rc) throws GameActionException {
+        GameState.init(rc);
+
         switch(rc.getType()) {
         case ARCHON:
-            BotArchon.loop(rc);
+            BotArchon.loop();
             break;
         case GARDENER:
-            BotGardener.loop(rc);
+            BotGardener.loop();
             break;
         case SCOUT:
-            BotScout.loop(rc);
+            BotScout.loop();
             break;
         case TANK:
-            BotTank.loop(rc);
+            BotTank.loop();
             break;
         case LUMBERJACK:
-            BotLumberjack.loop(rc);
+            BotLumberjack.loop();
             break;
         case SOLDIER:
-            BotSoldier.loop(rc);
+            BotSoldier.loop();
             break;
         default:
             System.out.println("FATAL! unexpected robot type: " + rc.getType());

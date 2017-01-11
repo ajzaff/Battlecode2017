@@ -1,16 +1,21 @@
 package team419;
 
 import battlecode.common.Clock;
-import battlecode.common.RobotController;
+import battlecode.common.GameActionException;
 
 final strictfp class BotSoldier extends GameState {
 
     @SuppressWarnings("InfiniteLoopStatement")
-    static void loop(RobotController rc) {
+    static void loop() {
         while (true) {
             int begin = rc.getRoundNum();
-            act();
-            GameState.update();
+            try {
+                GameState.update();
+                act();
+            } catch (Exception e) {
+                System.out.println("EXCEPTION! thrown in act(): ");
+                e.printStackTrace(System.out);
+            }
             int end = rc.getRoundNum();
             if (begin != end) {
                 System.out.println("ERROR! overflowing bytecode limit");
@@ -19,7 +24,9 @@ final strictfp class BotSoldier extends GameState {
         }
     }
 
-    private static void act() {
-
+    private static void act() throws GameActionException {
+        if (Navigation.tryMoveRandom()) {
+            return;
+        }
     }
 }
