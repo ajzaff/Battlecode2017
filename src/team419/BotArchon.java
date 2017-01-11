@@ -41,10 +41,6 @@ final strictfp class BotArchon extends GameState {
         }
     }
 
-    private static int roundBullets(float n) {
-        return (int) (n / 10) * 10;
-    }
-
     private static boolean tryDonateBullets() throws GameActionException {
        float n;
 
