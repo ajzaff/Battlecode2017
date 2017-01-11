@@ -3,10 +3,13 @@ package team419;
 import battlecode.common.Clock;
 import battlecode.common.GameActionException;
 
-final strictfp class BotScout extends GameState  {
+final strictfp class BotScout extends Navigation {
 
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
+        FastMath.initRand(rc);
+        myDir = Navigation.getRandomDirection();
+
         while (true) {
             int begin = rc.getRoundNum();
             try {
@@ -25,8 +28,10 @@ final strictfp class BotScout extends GameState  {
     }
 
     private static void act() throws GameActionException {
-        if (Navigation.tryMoveRandom()) {
+        if (Navigation.tryMoveInDirection(myDir)) {
             return;
+        } else {
+            myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
         }
     }
 }

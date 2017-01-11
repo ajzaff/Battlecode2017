@@ -6,13 +6,14 @@ import battlecode.common.GameActionException;
 
 import static battlecode.common.RobotType.GARDENER;
 
-final strictfp class BotArchon extends GameState {
+final strictfp class BotArchon extends Navigation {
 
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
 
         GameState.init(rc);
         FastMath.initRand(rc);
+        myDir = Navigation.getRandomDirection();
 
         while (true) {
             int begin = rc.getRoundNum();
@@ -36,8 +37,10 @@ final strictfp class BotArchon extends GameState {
         if (roundNum % 20 == 0 && tryHireGardener()) {
             return;
         }
-        if(Navigation.tryMoveRandom()) {
+        if (Navigation.tryMoveInDirection(myDir)) {
             return;
+        } else {
+            myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
         }
     }
 

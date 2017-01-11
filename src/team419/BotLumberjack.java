@@ -7,10 +7,13 @@ import battlecode.common.TreeInfo;
 
 import static battlecode.common.Team.NEUTRAL;
 
-final strictfp class BotLumberjack extends GameState {
+final strictfp class BotLumberjack extends Navigation {
 
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
+        FastMath.initRand(rc);
+        myDir = Navigation.getRandomDirection();
+
         while (true) {
             int begin = rc.getRoundNum();
             try {
@@ -33,8 +36,10 @@ final strictfp class BotLumberjack extends GameState {
         if (tryChopNearbyTree()) {
             return;
         }
-        if (Navigation.tryMoveRandom()) {
+        if (Navigation.tryMoveInDirection(myDir)) {
             return;
+        } else {
+            myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
         }
     }
 
