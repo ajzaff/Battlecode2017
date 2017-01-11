@@ -33,6 +33,7 @@ final strictfp class BotLumberjack extends Navigation {
 
     private static void act() throws GameActionException {
         GameState.senseNearbyTrees();
+        tryShakeNearbyTree();
         if (tryChopNearbyTree()) {
             return;
         }
@@ -46,11 +47,37 @@ final strictfp class BotLumberjack extends Navigation {
     private static boolean tryChopNearbyTree() throws GameActionException {
         if (rc.hasAttacked())
             return false;
-        for (TreeInfo t : nearbyTrees) {
-            if (t.team == NEUTRAL && rc.canChop(t.location)) {
-                rc.chop(t.location);
-            }
-        }
-        return false;
+        TreeInfo bestTree = null;
+        for (TreeInfo t : nearbyTrees)
+            if (t.team == NEUTRAL && t.getContainedBullets() == 0 && rc.canChop(t.location))
+                if (bestTree == null) {
+                    bestTree = t;
+                } else if (t.getContainedRobot() != null) {
+                    if (bestTree.getContainedRobot() == null)
+                        bestTree = t;
+                    else if (t.getContainedRobot().attackPower > bestTree.getContainedRobot().attackPower)
+                        bestTree = t;
+                }
+        if (bestTree == null)
+            return false;
+        rc.chop(bestTree.location);
+        return true;
+    }
+
+    private static boolean tryShakeNearbyTree() throws GameActionException {
+        if (!rc.canShake())
+            return false;
+
+        TreeInfo bestTree = null;
+        for(TreeInfo t : nearbyTrees)
+            if (t.team == NEUTRAL && rc.canShake(t.location))
+                if (bestTree == null)
+                    bestTree = t;
+                else if (t.getContainedBullets() > bestTree.getContainedBullets())
+                    bestTree = t;
+        if (bestTree == null)
+            return false;
+        rc.shake(bestTree.location);
+        return true;
     }
 }
