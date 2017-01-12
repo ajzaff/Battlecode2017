@@ -53,7 +53,7 @@ final strictfp class BotArchon extends Navigation {
             for (RobotInfo r : nearbyRobots) {
                 if (r.team == myTeam)
                     safeLoc = safeLoc.add(myLoc.directionTo(r.location));
-                else if (r.team == theirTeam && r.type.canAttack())
+                else if (r.team == theirTeam)
                     dangerLoc = dangerLoc.add(myLoc.directionTo(r.location));
             }
 
