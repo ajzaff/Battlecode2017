@@ -58,7 +58,7 @@ final strictfp class BotArchon extends Navigation {
        else if (roundLimit - roundNum < 100)
            n =.2f * rc.getTeamBullets();
        else if (roundNum > 200)
-           n = .0105f * rc.getTeamBullets(); // nest egg
+           n = .05f * rc.getTeamBullets(); // nest egg
        else
            n = 0; // too soon for charity
 
