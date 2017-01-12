@@ -33,10 +33,8 @@ final strictfp class BotScout extends Navigation {
     private static void act() throws GameActionException {
         GameState.senseNearbyTrees();
         tryShakeNearbyTree();
-        if (Navigation.tryMoveInDirection(exploreDir)) {
-            return;
-        } else {
-            exploreDir = exploreDir.rotateRightRads(THIRTYSECOND_TURN);
+        for (int i = 0; i < 6 && !Navigation.tryMoveInDirection(exploreDir); i++) {
+            exploreDir = exploreDir.rotateRightRads(EIGHTH_TURN);
         }
     }
 
