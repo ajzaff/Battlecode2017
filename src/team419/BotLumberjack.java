@@ -8,10 +8,13 @@ import static battlecode.common.Team.NEUTRAL;
 
 final strictfp class BotLumberjack extends Navigation {
 
+    private static int rotateRandomness;
+
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
         FastMath.initRand(rc);
         exploreDir = Navigation.getRandomDirection();
+        rotateRandomness = FastMath.rand() % 2 == 0? 1 : -1;
 
         while (true) {
             int begin = rc.getRoundNum();
@@ -39,9 +42,22 @@ final strictfp class BotLumberjack extends Navigation {
         if (tryChopNearbyTree()) {
             return;
         }
-        for (int i = 0; i < 6 && !Navigation.tryMoveInDirection(exploreDir); i++) {
-            exploreDir = exploreDir.rotateRightRads(EIGHTH_TURN);
+        tryExploreMap();
+    }
+
+    private static boolean tryExploreMap() throws GameActionException {
+        if (rc.hasMoved())
+            return false;
+
+        for (int i = 0; i < 6; i++) {
+            if (rc.canMove(exploreDir)) {
+                rc.move(exploreDir);
+                return true;
+            }
+            exploreDir = exploreDir.rotateRightRads(rotateRandomness * EIGHTH_TURN);
         }
+
+        return false;
     }
 
     private static boolean tryMicro() throws GameActionException {
