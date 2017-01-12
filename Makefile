@@ -15,6 +15,8 @@ report:
 	python scripts/report.py
 archive:
 	bash scripts/archive.sh
+branch:
+	bash scripts/createBotFromBranch.sh
 jar:
 	bash gradlew jarForUpload
 client:
