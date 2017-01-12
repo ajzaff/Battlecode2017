@@ -38,7 +38,7 @@ final strictfp class BotArchon extends Navigation {
         tryDonateBullets();
         GameState.senseNearbyTrees();
         tryShakeNearbyTree();
-        if (roundNum % 20 == 0) {
+        if (roundNum % 40 == 0) {
             tryHireGardener();
         }
         if (Navigation.tryMoveInDirection(myDir)) {

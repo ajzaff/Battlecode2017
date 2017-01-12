@@ -7,6 +7,7 @@ strictfp class GameState {
     // constants
     static RobotController rc;
     static Team myTeam;
+    static Team theirTeam;
     static float sensorRadius;
     static RobotType myType;
     static int myId;
@@ -17,12 +18,14 @@ strictfp class GameState {
     static RobotInfo[] nearbyRobots;
     static RobotInfo[] nearbyFriends;
     static TreeInfo[] nearbyTrees;
+    static RobotInfo[] nearbyEnemies;
     static BulletInfo[] nearbyBullets;
     static int robotCount;
 
     static void init(RobotController rc) {
         GameState.rc = rc;
         myTeam = rc.getTeam();
+        theirTeam = rc.getTeam().opponent();
         myType = rc.getType();
         myLoc = rc.getLocation();
         myId = rc.getID();
@@ -40,6 +43,14 @@ strictfp class GameState {
         nearbyRobots = rc.senseNearbyRobots();
     }
 
+    static RobotInfo[] senseNearbyRobots(float v, Team t) {
+         return rc.senseNearbyRobots(v, t);
+    }
+
+    static RobotInfo[] senseNearbyRobots(float v) {
+        return rc.senseNearbyRobots(v);
+    }
+
     static void senseNearbyTrees() {
         nearbyTrees = rc.senseNearbyTrees();
     }
@@ -50,5 +61,9 @@ strictfp class GameState {
 
     static void senseNearbyFriends() {
         nearbyFriends = rc.senseNearbyRobots(sensorRadius, myTeam);
+    }
+
+    static void senseNearbyEnemies() {
+        nearbyEnemies = rc.senseNearbyRobots(sensorRadius, theirTeam);
     }
 }
