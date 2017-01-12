@@ -39,18 +39,45 @@ final strictfp class BotLumberjack extends Navigation {
         if (tryChopNearbyTree()) {
             return;
         }
-        if (Navigation.tryMoveInDirection(myDir)) {
-            return;
-        } else {
-            myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
+        for (int i=0; i < 6 && !Navigation.tryMoveInDirection(myDir); i++) {
+            myDir = myDir.rotateRightRads(EIGHTH_TURN);
         }
     }
 
     private static boolean tryMicro() throws GameActionException {
 
+        if (!rc.hasAttacked() && rc.canStrike()) {
+
+            RobotInfo[] enemies = GameState.senseNearbyRobots(1 + LUMBERJACK_STRIKE_RADIUS, theirTeam);
+
+            // Try a strike attack
+            if (enemies.length > 0) {
+                rc.strike();
+            }
+        }
+
         if (!rc.hasMoved()) {
 
-            RobotInfo[] friends = GameState.senseNearbyRobots(LUMBERJACK_STRIKE_RADIUS, myTeam);
+            MapLocation enemyLoc = myLoc;
+            Direction dir = null;
+
+            // Try to pick a fight with a nearby enemy
+            // Or run away if we've already attacked this turn
+            if (nearbyEnemies.length > 0) {
+                for (RobotInfo r : nearbyEnemies) {
+                    enemyLoc = enemyLoc.add(myLoc.directionTo(r.location));
+                }
+                if (rc.hasAttacked()) {
+                    dir = enemyLoc.directionTo(myLoc);
+                } else {
+                    dir = myLoc.directionTo(enemyLoc);
+                }
+                if (Navigation.tryMoveInDirection(dir)) {
+                    return true;
+                }
+            }
+
+            RobotInfo[] friends = GameState.senseNearbyRobots(1 + LUMBERJACK_STRIKE_RADIUS, myTeam);
             MapLocation friendLoc = myLoc;
 
             // Try to move away from friendly lumberjack strike radius
@@ -58,25 +85,13 @@ final strictfp class BotLumberjack extends Navigation {
                 if (r.type == LUMBERJACK)
                     friendLoc = friendLoc.add(myLoc.directionTo(friendLoc));
 
-            Direction dir = friendLoc.directionTo(myLoc);
-            if (dir != null && rc.canMove(dir)) {
-                rc.move(dir);
-            }
-
-            MapLocation enemyLoc = myLoc;
-
-            // Try to pick a fight with a nearby enemy
-            if (nearbyEnemies.length > 0) {
-                for (RobotInfo r : nearbyEnemies) {
-                    enemyLoc = enemyLoc.add(myLoc.directionTo(r.location));
-                }
-                dir = myLoc.directionTo(enemyLoc);
+            dir = friendLoc.directionTo(myLoc);
+            if (dir != null) {
                 Navigation.tryMoveInDirection(dir);
             }
-
         }
 
-        return false;
+        return true;
     }
 
     private static double targetScore(RobotInfo r) {
