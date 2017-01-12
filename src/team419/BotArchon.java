@@ -1,9 +1,6 @@
 package team419;
 
-import battlecode.common.Clock;
-import battlecode.common.Direction;
-import battlecode.common.GameActionException;
-import battlecode.common.TreeInfo;
+import battlecode.common.*;
 
 import static battlecode.common.RobotType.GARDENER;
 import static battlecode.common.Team.NEUTRAL;
@@ -37,13 +34,40 @@ final strictfp class BotArchon extends Navigation {
     private static void act() throws GameActionException {
         tryDonateBullets();
         GameState.senseNearbyTrees();
+        GameState.senseNearbyRobots();
         tryShakeNearbyTree();
-        if (roundNum % 40 == 0) {
-            tryHireGardener();
+        tryMicro();
+        tryHireGardener();
+    }
+
+    private static void tryMicro() throws GameActionException {
+
+        if (nearbyRobots.length > 0 && !rc.hasMoved()) {
+
+            MapLocation safeLoc = myLoc;
+            MapLocation dangerLoc = myLoc;
+            Direction dir = null;
+
+            // Try to flee away from enemies in the direction of friendlies
+            for (RobotInfo r : nearbyRobots) {
+                if (r.team == myTeam)
+                    safeLoc = safeLoc.add(myLoc.directionTo(r.location));
+                else if (r.team == theirTeam)
+                    dangerLoc = dangerLoc.add(myLoc.directionTo(r.location));
+            }
+
+            dir = dangerLoc.directionTo(myLoc);
+            if (dir != null && Navigation.tryMoveInDirection(dir))
+                return;
+
+            // Still in danger but unable to move, try moving toward friendly unit
+            if (dir != null) {
+                dir = myLoc.directionTo(safeLoc);
+                if (dir != null && Navigation.tryMoveInDirection(dir))
+                    return;
+            }
         }
-        for (int i = 0; i < 6 && !Navigation.tryMoveInDirection(exploreDir); i++) {
-            exploreDir = exploreDir.rotateRightRads(EIGHTH_TURN);
-        }
+
     }
 
     private static boolean tryDonateBullets() throws GameActionException {
@@ -58,7 +82,7 @@ final strictfp class BotArchon extends Navigation {
        else if (roundLimit - roundNum < 100)
            n =.2f * rc.getTeamBullets();
        else if (roundNum > 200)
-           n = .0105f * rc.getTeamBullets(); // nest egg
+           n = .05f * rc.getTeamBullets(); // nest egg
        else
            n = 0; // too soon for charity
 
@@ -72,7 +96,7 @@ final strictfp class BotArchon extends Navigation {
     }
 
     private static boolean tryHireGardener() throws GameActionException {
-        if (!rc.isBuildReady() || !rc.hasRobotBuildRequirements(GARDENER)) {
+        if (!rc.isBuildReady() || !rc.hasRobotBuildRequirements(GARDENER) || roundNum % 30 != 0) {
             return false;
         }
         Direction dir = new Direction(Navigation.getRandomRadians());
