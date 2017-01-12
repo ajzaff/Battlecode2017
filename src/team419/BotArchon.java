@@ -2,6 +2,7 @@ package team419;
 
 import battlecode.common.*;
 
+import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
 import static battlecode.common.RobotType.GARDENER;
 import static battlecode.common.Team.NEUTRAL;
 
@@ -72,17 +73,25 @@ final strictfp class BotArchon extends Navigation {
 
     private static boolean tryDonateBullets() throws GameActionException {
        float n;
+       float teamBullets = rc.getTeamBullets();
+       int victoryPoints = rc.getTeamVictoryPoints();
+
+       // Try for instant win
+       if (teamBullets / 10 + victoryPoints >= VICTORY_POINTS_TO_WIN) {
+           rc.donate(teamBullets);
+           return true;
+       }
 
        if (robotCount < 7 && roundNum > 900)
-           n = rc.getTeamBullets();  // pray for generosity
+           n = teamBullets;  // pray for generosity
        if (roundLimit - roundNum < 5)
-           n = rc.getTeamBullets();  // transfer all bullets at last instant
+           n = teamBullets;  // transfer all bullets at last instant
        else if (roundLimit - roundNum < 50)
-           n = .33f * rc.getTeamBullets();
+           n = .33f * teamBullets;
        else if (roundLimit - roundNum < 100)
-           n =.2f * rc.getTeamBullets();
+           n =.2f * teamBullets;
        else if (roundNum > 200)
-           n = .05f * rc.getTeamBullets(); // nest egg
+           n = .05f * teamBullets; // nest egg
        else
            n = 0; // too soon for charity
 
