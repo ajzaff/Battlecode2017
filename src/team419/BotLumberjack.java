@@ -129,7 +129,7 @@ final strictfp class BotLumberjack extends Navigation {
             return false;
         TreeInfo bestTree = null;
         for (TreeInfo t : nearbyTrees)
-            if (t.team == NEUTRAL && t.getContainedBullets() == 0 && rc.canChop(t.location))
+            if ((t.team == NEUTRAL || t.team == theirTeam) && t.getContainedBullets() == 0 && rc.canChop(t.location))
                 if (bestTree == null) {
                     bestTree = t;
                 } else if (t.getContainedRobot() != null) {
