@@ -21,6 +21,7 @@ strictfp class GameState {
     static RobotInfo[] nearbyEnemies;
     static BulletInfo[] nearbyBullets;
     static int robotCount;
+    static int age;
 
     static void init(RobotController rc) {
         GameState.rc = rc;
@@ -31,12 +32,14 @@ strictfp class GameState {
         myId = rc.getID();
         sensorRadius = myType.sensorRadius;
         roundLimit = rc.getRoundLimit();
+        age = 1;
     }
 
     static void update() {
         myLoc = rc.getLocation();
         roundNum = rc.getRoundNum();
         robotCount = rc.getRobotCount();
+        age++;
     }
 
     static void senseNearbyRobots() {
