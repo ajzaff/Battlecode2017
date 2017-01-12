@@ -15,8 +15,7 @@ strictfp class Navigation extends GameState {
     static final float HALF_TURN = PI;
     static final float FULL_TURN = PI2;
 
-    static Direction myDir;
-    static MapLocation myDest;
+    static Direction exploreDir;
 
     /**
      * A constant equaling 1/255 radian (i.e. (float) (1f/255 * 2*PI))

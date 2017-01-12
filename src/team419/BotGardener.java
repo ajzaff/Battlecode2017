@@ -11,7 +11,7 @@ final strictfp class BotGardener extends Navigation {
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
         FastMath.initRand(rc);
-        myDir = Navigation.getRandomDirection();
+        exploreDir = Navigation.getRandomDirection();
 
         while (true) {
             int begin = rc.getRoundNum();
@@ -43,10 +43,10 @@ final strictfp class BotGardener extends Navigation {
         if (tryWaterNearbyTrees()) {
             return;
         }
-        if (Navigation.tryMoveInDirection(myDir)) {
+        if (Navigation.tryMoveInDirection(exploreDir)) {
             return;
         } else {
-            myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
+            exploreDir = exploreDir.rotateRightRads(THIRTYSECOND_TURN);
         }
     }
 
@@ -127,7 +127,7 @@ final strictfp class BotGardener extends Navigation {
                 continue;
             if (nearbyTrees.length < 2) {
                 rc.plantTree(dir);
-                myDir = Navigation.getRandomDirection();
+                exploreDir = Navigation.getRandomDirection();
             }
             return true;
         }

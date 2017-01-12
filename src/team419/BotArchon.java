@@ -15,7 +15,7 @@ final strictfp class BotArchon extends Navigation {
 
         GameState.init(rc);
         FastMath.initRand(rc);
-        myDir = Navigation.getRandomDirection();
+        exploreDir = Navigation.getRandomDirection();
 
         while (true) {
             int begin = rc.getRoundNum();
@@ -41,10 +41,10 @@ final strictfp class BotArchon extends Navigation {
         if (roundNum % 40 == 0) {
             tryHireGardener();
         }
-        if (Navigation.tryMoveInDirection(myDir)) {
+        if (Navigation.tryMoveInDirection(exploreDir)) {
             return;
         } else {
-            myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
+            exploreDir = exploreDir.rotateRightRads(THIRTYSECOND_TURN);
         }
     }
 

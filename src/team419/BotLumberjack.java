@@ -11,7 +11,7 @@ final strictfp class BotLumberjack extends Navigation {
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
         FastMath.initRand(rc);
-        myDir = Navigation.getRandomDirection();
+        exploreDir = Navigation.getRandomDirection();
 
         while (true) {
             int begin = rc.getRoundNum();
@@ -39,8 +39,8 @@ final strictfp class BotLumberjack extends Navigation {
         if (tryChopNearbyTree()) {
             return;
         }
-        for (int i=0; i < 6 && !Navigation.tryMoveInDirection(myDir); i++) {
-            myDir = myDir.rotateRightRads(EIGHTH_TURN);
+        for (int i = 0; i < 6 && !Navigation.tryMoveInDirection(exploreDir); i++) {
+            exploreDir = exploreDir.rotateRightRads(EIGHTH_TURN);
         }
     }
 

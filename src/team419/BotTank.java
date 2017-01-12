@@ -11,7 +11,7 @@ final strictfp class BotTank extends Navigation {
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
         FastMath.initRand(rc);
-        myDir = Navigation.getRandomDirection();
+        exploreDir = Navigation.getRandomDirection();
 
         while (true) {
             int begin = rc.getRoundNum();
@@ -33,10 +33,10 @@ final strictfp class BotTank extends Navigation {
     private static void act() throws GameActionException {
         GameState.senseNearbyTrees();
         tryShakeNearbyTree();
-        if (Navigation.tryMoveInDirection(myDir)) {
+        if (Navigation.tryMoveInDirection(exploreDir)) {
             return;
         } else {
-            myDir = myDir.rotateRightRads(THIRTYSECOND_TURN);
+            exploreDir = exploreDir.rotateRightRads(THIRTYSECOND_TURN);
         }
     }
 
