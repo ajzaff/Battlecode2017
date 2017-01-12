@@ -11,6 +11,7 @@ strictfp class Navigation extends GameState {
     static final float THIRTYSECOND_TURN = 0.19634955f;
     static final float SIXTEENTH_TURN = 0.3926991f;
     static final float EIGHTH_TURN = 0.7853982f;
+    static final float HEX_TURN = 1.0471976f;
     static final float QUARTER_TURN = 1.5707964f;
     static final float HALF_TURN = PI;
     static final float FULL_TURN = PI2;

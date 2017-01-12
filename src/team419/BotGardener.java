@@ -8,10 +8,11 @@ import static battlecode.common.Team.NEUTRAL;
 
 final strictfp class BotGardener extends Navigation {
 
+    private static boolean foundOrchard;
+
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
         FastMath.initRand(rc);
-        exploreDir = Navigation.getRandomDirection();
 
         while (true) {
             int begin = rc.getRoundNum();
@@ -33,19 +34,39 @@ final strictfp class BotGardener extends Navigation {
     private static void act() throws GameActionException {
         tryBuildRobot();
         GameState.senseNearbyTrees();
-        tryShakeNearbyTree();
-        if (tryPlantTreeRandom()) {
-            GameState.senseNearbyFriends();
-            tryWaterNearbyTrees();
-            return;
-        }
         GameState.senseNearbyFriends();
-        if (tryWaterNearbyTrees()) {
-            return;
+        tryShakeNearbyTree();
+        tryWaterNearbyTrees();
+        if (!tryRouteToOrchard()) {
+            tryPlantTree();
         }
-        for (int i = 0; i < 6 && !Navigation.tryMoveInDirection(exploreDir); i++) {
-            exploreDir = exploreDir.rotateRightRads(EIGHTH_TURN);
+    }
+
+    private static boolean tryRouteToOrchard() throws GameActionException {
+
+        if (foundOrchard)
+            return false;
+
+        MapLocation newLoc = myLoc;
+
+        if (nearbyFriends.length > 0) {
+
+            // Find a new location ideally away from existing gardeners
+            for (RobotInfo r : nearbyFriends)
+                if (r.team == myTeam && r.type == GARDENER && myLoc.distanceSquaredTo(r.location) <= 64)
+                    newLoc = newLoc.add(myLoc.directionTo(r.location));
+
+            Direction dir = newLoc.directionTo(myLoc);
+            if (dir != null && Navigation.tryMoveInDirection(dir)) {
+                return true;
+            }
+
+            // Found a suitable location to plant
+            foundOrchard = true;
+
         }
+
+        return false;
     }
 
     private static boolean tryBuildRobot() throws GameActionException {
@@ -66,26 +87,6 @@ final strictfp class BotGardener extends Navigation {
                 return true;
             }
             dir = dir.rotateRightRads(EIGHTH_TURN);
-        }
-        return false;
-    }
-
-    private static boolean tryRouteToNearbyTrees() throws GameActionException {
-        if (rc.hasMoved())
-            return false;
-        TreeInfo worstTree = null;
-        for (TreeInfo t : nearbyTrees)
-            if (t.team == myTeam)
-                if (worstTree == null)
-                    worstTree = t;
-                else if (t.getHealth() < worstTree.getHealth())
-                    worstTree = t;
-        if (worstTree == null)
-            return false;
-        Direction directionToWorstTree = myLoc.directionTo(worstTree.location);
-        if (rc.canMove(directionToWorstTree)) {
-            rc.move(directionToWorstTree);
-            return true;
         }
         return false;
     }
@@ -116,25 +117,35 @@ final strictfp class BotGardener extends Navigation {
         return false;
     }
 
-    private static boolean tryPlantTreeRandom() throws GameActionException {
+    private static boolean tryPlantTree() throws GameActionException {
         if (!rc.hasTreeBuildRequirements())
             return false;
-        for (int i=0; i < 8; i++) {
-            Direction dir = new Direction(Navigation.getRandomRadians());
-            if (!rc.canPlantTree(dir))
-                continue;
-            if (nearbyTrees.length < 2) {
-                rc.plantTree(dir);
-                exploreDir = Navigation.getRandomDirection();
-            }
-            return true;
-        }
-        return false;
-    }
 
-    private static boolean tryPlantTreeOrchard() {
-        if (!rc.hasTreeBuildRequirements())
+        // Refuse to plant on dense maps or near many trees
+        if (nearbyTrees.length >= 7) {
             return false;
+        }
+
+        Direction dir = new Direction(0);
+        Direction plantDir = null;
+        int openDirs = 0;
+
+        // Try to plant a tree but leave space to spawn something
+        for (int i=0; i < 8; i++) {
+            if (rc.canPlantTree(dir)) {
+                openDirs++;
+                if (plantDir == null)
+                    plantDir = dir;
+            }
+            dir = dir.rotateRightRads(HEX_TURN);
+        }
+
+        // Refuse to block self entirely by trees
+        if (openDirs < 2) {
+            return false;
+        }
+
+        rc.plantTree(plantDir);
         return false;
     }
 
