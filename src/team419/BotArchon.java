@@ -105,7 +105,7 @@ final strictfp class BotArchon extends Navigation {
     }
 
     private static boolean tryHireGardener() throws GameActionException {
-        if (!rc.isBuildReady() || !rc.hasRobotBuildRequirements(GARDENER) || roundNum % 30 != 0) {
+        if (!rc.isBuildReady() || !rc.hasRobotBuildRequirements(GARDENER) || roundNum % 30 != 1) {
             return false;
         }
         Direction dir = new Direction(Navigation.getRandomRadians());
