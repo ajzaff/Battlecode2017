@@ -2,13 +2,13 @@
 
 # Teams matrix
 teams=""
-teams+="betterexplore "
-teams+="donothing "
-teams+="examplefuncsplayer "
-teams+="lumberjack "
-teams+="orchard "
+#teams+="betterexplore "
+#teams+="donothing "
+#teams+="examplefuncsplayer "
+#teams+="lumberjack "
+#teams+="orchard "
 teams+="rapidunits "
-teams+="safearchons "
+#teams+="safearchons "
 teams+="team419 "
 
 # Maps matrix
@@ -21,6 +21,7 @@ maps+="SparseForest "
 maps+="shrine "
 maps+="MagicWood "
 maps+="MOBA "
+maps+="LineOfFire "
 map_list=$(echo $maps | sed 's/ /,/g')
 
 mkdir -p logs/

@@ -75,6 +75,8 @@ final strictfp class BotScout extends Navigation {
 
     private static boolean tryMicro() throws GameActionException {
 
+        Direction dir;
+
         if (!rc.hasAttacked()) {
 
             // Try to shoot
@@ -102,35 +104,45 @@ final strictfp class BotScout extends Navigation {
         if (!rc.hasMoved()) {
 
             MapLocation enemyLoc = myLoc;
-            Direction dir = null;
+            MapLocation fleeLoc = myLoc;
 
             // Try to pick a fight with a nearby enemy
             // Or run away if we've already attacked this turn
+            // Try to move away from friendly lumberjack strike radius
             if (nearbyEnemies.length > 0) {
                 for (RobotInfo r : nearbyEnemies) {
-                    enemyLoc = enemyLoc.add(myLoc.directionTo(r.location));
+                    float targetScore = (float) targetScore(r);
+                    enemyLoc = enemyLoc.add(myLoc.directionTo(r.location), targetScore);
+
+                    if (r.type.canAttack())  // don't flee from non-attackers
+                        fleeLoc = fleeLoc.add(r.location.directionTo(myLoc), 1 - targetScore);
                 }
                 if (rc.hasAttacked()) {
-                    dir = enemyLoc.directionTo(myLoc);
+                    dir = myLoc.directionTo(fleeLoc);
                 } else {
                     dir = myLoc.directionTo(enemyLoc);
                 }
-                if (Navigation.tryMoveInDirection(dir)) {
+
+                RobotInfo[] friends = GameState.senseNearbyRobots(1 + LUMBERJACK_STRIKE_RADIUS, myTeam);
+
+                // Try to move away from friendly lumberjack strike radius
+                if (friends.length > 0) {
+                    MapLocation friendLoc = myLoc;
+
+                    for (RobotInfo r : friends)
+                        if (r.type == LUMBERJACK)
+                            friendLoc = friendLoc.add(myLoc.directionTo(friendLoc));
+
+                    dir = friendLoc.directionTo(myLoc);
+                    if (dir != null) {
+                        Navigation.tryMoveInDirection(dir);
+                    }
+                }
+
+                // Finally, move in the correct direction
+                if (dir != null && Navigation.tryMoveInDirection(dir)) {
                     return true;
                 }
-            }
-
-            RobotInfo[] friends = GameState.senseNearbyRobots(1 + LUMBERJACK_STRIKE_RADIUS, myTeam);
-            MapLocation friendLoc = myLoc;
-
-            // Try to move away from friendly lumberjack strike radius
-            for (RobotInfo r : friends)
-                if (r.type == LUMBERJACK)
-                    friendLoc = friendLoc.add(myLoc.directionTo(friendLoc));
-
-            dir = friendLoc.directionTo(myLoc);
-            if (dir != null) {
-                Navigation.tryMoveInDirection(dir);
             }
         }
 
@@ -142,22 +154,22 @@ final strictfp class BotScout extends Navigation {
 
         switch (r.type) {
         case GARDENER:
-            v = 2 * (1 - r.health / r.type.maxHealth);
+            v = 5 * (1 - r.health / r.type.maxHealth);
             break;
         case ARCHON:
-            v = 1 * (1 - r.health / r.type.maxHealth);
+            v = .9 * (1 - r.health / r.type.maxHealth);
             break;
         case SOLDIER:
-            v = .9 * (1 - r.health / r.type.maxHealth);
+            v = 1 * (1 - r.health / r.type.maxHealth);
             break;
         case LUMBERJACK:
             v = .8 * (1 - r.health / r.type.maxHealth);
             break;
         case TANK:
-            v = .7 * (1 - r.health / r.type.maxHealth);
+            v = 1 * (1 - r.health / r.type.maxHealth);
             break;
         case SCOUT:
-            v = .1 * (1 - r.health / r.type.maxHealth);
+            v = .7 * (1 - r.health / r.type.maxHealth);
             break;
         default:
             v = 0;
