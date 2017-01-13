@@ -9,6 +9,8 @@ import static battlecode.common.Team.NEUTRAL;
 final strictfp class BotGardener extends Navigation {
 
     private static boolean foundOrchard;
+    private static boolean firstScout;
+    private static boolean firstLumberjack;
 
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
@@ -75,8 +77,19 @@ final strictfp class BotGardener extends Navigation {
         if (!rc.isBuildReady())
             return false;
 
-        if (roundNum % 20 == 5 && rc.hasRobotBuildRequirements(LUMBERJACK)) {
+        // Spend surplus points on victory!
+        if (rc.getRobotCount() >= 100)
+            return false;
+
+        // Build one scout
+        if (!firstScout && rc.hasRobotBuildRequirements(SCOUT)) {
+            r = SCOUT;
+            firstScout = true;
+        } else if ((!firstLumberjack || roundNum % 50 == 0) && rc.hasRobotBuildRequirements(LUMBERJACK)) {
             r = LUMBERJACK;
+            firstLumberjack = true;
+        } else if (roundNum % 20 == 5 && rc.hasRobotBuildRequirements(SOLDIER)) {
+            r = SOLDIER;
         }
         if (r == null)
             return false;
