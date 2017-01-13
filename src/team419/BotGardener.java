@@ -81,7 +81,12 @@ final strictfp class BotGardener extends Navigation {
         if (rc.getRobotCount() >= 100)
             return false;
 
-        // Build one scout
+        // Unset early game spawn variables
+        if (roundNum >= 50) {
+            firstScout = false;
+            firstLumberjack = false;
+        }
+
         if (!firstScout && rc.hasRobotBuildRequirements(SCOUT)) {
             r = SCOUT;
             firstScout = true;
