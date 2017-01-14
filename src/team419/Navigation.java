@@ -49,33 +49,37 @@ strictfp class Navigation extends GameState {
         return false;
     }
 
-    static boolean tryMoveInDirection(Direction dir) throws GameActionException {
+    static boolean tryMoveInDirection(Direction dir, float stride) throws GameActionException {
         if (rc.hasMoved())
             return false;
-        if (rc.canMove(dir)) {
-            rc.move(dir);
+        if (rc.canMove(dir, stride)) {
+            rc.move(dir, stride);
             return true;
         }
         Direction left = dir.rotateLeftRads(EIGHTH_TURN);
-        if (rc.canMove(left)) {
-            rc.move(left);
+        if (rc.canMove(left, stride)) {
+            rc.move(left, stride);
             return true;
         }
         Direction right = dir.rotateRightRads(EIGHTH_TURN);
-        if (rc.canMove(right)) {
-            rc.move(right);
+        if (rc.canMove(right, stride)) {
+            rc.move(right, stride);
             return true;
         }
         Direction leftNormal = dir.rotateLeftRads(QUARTER_TURN);
-        if (rc.canMove(leftNormal)) {
-            rc.move(leftNormal);
+        if (rc.canMove(leftNormal, stride)) {
+            rc.move(leftNormal, stride);
             return true;
         }
         Direction rightNormal = dir.rotateRightRads(QUARTER_TURN);
-        if (rc.canMove(rightNormal)) {
-            rc.move(rightNormal);
+        if (rc.canMove(rightNormal, stride)) {
+            rc.move(rightNormal, stride);
             return true;
         }
         return false;
+    }
+
+    static boolean tryMoveInDirection(Direction dir) throws GameActionException {
+        return tryMoveInDirection(dir, myType.strideRadius);
     }
 }

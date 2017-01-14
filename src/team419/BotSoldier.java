@@ -85,7 +85,7 @@ final strictfp class BotSoldier extends Navigation {
                 MapLocation enemyLoc = myLoc;
 
                 for (RobotInfo r : nearbyEnemies) {
-                    enemyLoc = enemyLoc.add(myLoc.directionTo(enemyLoc), (float)targetScore(r));
+                    enemyLoc = enemyLoc.add(myLoc.directionTo(r.location), (float)targetScore(r));
                 }
 
                 dir = myLoc.directionTo(enemyLoc);
@@ -129,7 +129,7 @@ final strictfp class BotSoldier extends Navigation {
 
                     for (RobotInfo r : friends)
                         if (r.type == LUMBERJACK)
-                            friendLoc = friendLoc.add(myLoc.directionTo(friendLoc));
+                            friendLoc = friendLoc.add(myLoc.directionTo(r.location));
 
                     dir = friendLoc.directionTo(myLoc);
                     if (dir != null) {

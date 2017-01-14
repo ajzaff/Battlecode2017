@@ -106,7 +106,7 @@ final strictfp class BotLumberjack extends Navigation {
 
                     for (RobotInfo r : friends)
                         if (r.type == LUMBERJACK)
-                            friendLoc = friendLoc.add(myLoc.directionTo(friendLoc));
+                            friendLoc = friendLoc.add(myLoc.directionTo(r.location));
 
                     dir = friendLoc.directionTo(myLoc);
                     if (dir != null) {

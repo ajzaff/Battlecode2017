@@ -83,18 +83,16 @@ final strictfp class BotGardener extends Navigation {
 
         // Unset early game spawn variables
         if (roundNum >= 50) {
-            firstScout = false;
-            firstLumberjack = false;
+            firstScout = true;
+            firstLumberjack = true;
         }
 
         if (!firstScout && rc.hasRobotBuildRequirements(SCOUT)) {
             r = SCOUT;
-            firstScout = true;
         } else if ((!firstLumberjack || roundNum % 50 == 0) && rc.hasRobotBuildRequirements(LUMBERJACK)) {
             r = LUMBERJACK;
-            firstLumberjack = true;
-        } else if (roundNum % 20 == 5 && rc.hasRobotBuildRequirements(SOLDIER)) {
-            r = SOLDIER;
+        } else if (roundNum % 20 == 5 && rc.hasRobotBuildRequirements(SCOUT)) {
+            r = SCOUT;
         }
         if (r == null)
             return false;
@@ -102,6 +100,10 @@ final strictfp class BotGardener extends Navigation {
         for (int i=0; i < 8; i++) {
             if (rc.canBuildRobot(r, dir)) {
                 rc.buildRobot(r, dir);
+                if (r == SCOUT)
+                    firstScout = true;
+                if (r == LUMBERJACK)
+                    firstLumberjack = true;
                 return true;
             }
             dir = dir.rotateRightRads(EIGHTH_TURN);

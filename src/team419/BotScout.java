@@ -2,13 +2,16 @@ package team419;
 
 import battlecode.common.*;
 
-import static battlecode.common.GameConstants.LUMBERJACK_STRIKE_RADIUS;
-import static battlecode.common.RobotType.LUMBERJACK;
+import static battlecode.common.RobotType.GARDENER;
 import static battlecode.common.Team.NEUTRAL;
 
 final strictfp class BotScout extends Navigation {
 
     private static int rotateRandomness;
+
+    // Gardener agro
+    private static RobotInfo targetGardener;
+    private static float lastKnownTargetHealth = -1;
 
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
@@ -37,7 +40,9 @@ final strictfp class BotScout extends Navigation {
         GameState.senseNearbyTrees();
         GameState.senseNearbyEnemies();
         tryShakeNearbyTree();
-        tryMicro();
+        if (tryMicro()) {
+            return;
+        }
         tryExploreMap();
     }
 
@@ -77,76 +82,65 @@ final strictfp class BotScout extends Navigation {
 
         Direction dir;
 
-        if (!rc.hasAttacked()) {
-
-            // Try to shoot
-            if (nearbyEnemies.length > 0) {
-
-                RobotInfo bestTarget = null;
-                double bestScore = -99999;
-                float distance = 0;
-
-                for (RobotInfo r : nearbyEnemies) {
-                    double score = targetScore(r);
-                    if (score > bestScore) {
-                        bestTarget = r;
-                        bestScore = score;
-                        distance = myLoc.distanceTo(r.location);
-                    }
+        if (nearbyEnemies.length > 0) {
+            // Try to find a gardener to agro
+            boolean foundSameGardener = targetGardener == null;
+            for (RobotInfo r : nearbyEnemies) {
+                if (r.type == GARDENER) {
+                    if (targetGardener != null && targetGardener.getID() == r.getID())
+                        foundSameGardener = true;
+                    targetGardener = r;
+                    break;
                 }
-
-                if (bestTarget != null && rc.canFireSingleShot()) {
-                    rc.fireSingleShot(myLoc.directionTo(bestTarget.location));
-                }
+            }
+            // gardener was killed or disappeared, reset target
+            if (!foundSameGardener) {
+                resetTargetGardener();
             }
         }
 
-        if (!rc.hasMoved()) {
+        if (targetGardener != null) {
 
-            MapLocation enemyLoc = myLoc;
-            MapLocation fleeLoc = myLoc;
+            rc.setIndicatorDot(targetGardener.location, 255, 0, 0);
+            dir = myLoc.directionTo(targetGardener.location);
 
-            // Try to pick a fight with a nearby enemy
-            // Or run away if we've already attacked this turn
-            // Try to move away from friendly lumberjack strike radius
-            if (nearbyEnemies.length > 0) {
-                for (RobotInfo r : nearbyEnemies) {
-                    float targetScore = (float) targetScore(r);
-                    enemyLoc = enemyLoc.add(myLoc.directionTo(r.location), targetScore);
+            // Can't occupy same location as target gardener!
+            // Reset the target and return false.
+            if (dir == null) {
+                resetTargetGardener();
+                return false;
+            }
 
-                    if (r.type.canAttack())  // don't flee from non-attackers
-                        fleeLoc = fleeLoc.add(r.location.directionTo(myLoc), 1 - targetScore);
-                }
-                if (rc.hasAttacked()) {
-                    dir = myLoc.directionTo(fleeLoc);
-                } else {
-                    dir = myLoc.directionTo(enemyLoc);
-                }
+            // We're close enough to the gardener to micro it.
+            if (myLoc.distanceTo(targetGardener.location) < 2.5) {
 
-                RobotInfo[] friends = GameState.senseNearbyRobots(1 + LUMBERJACK_STRIKE_RADIUS, myTeam);
-
-                // Try to move away from friendly lumberjack strike radius
-                if (friends.length > 0) {
-                    MapLocation friendLoc = myLoc;
-
-                    for (RobotInfo r : friends)
-                        if (r.type == LUMBERJACK)
-                            friendLoc = friendLoc.add(myLoc.directionTo(friendLoc));
-
-                    dir = friendLoc.directionTo(myLoc);
-                    if (dir != null) {
-                        Navigation.tryMoveInDirection(dir);
-                    }
+                // Try to skirt around the target if we're not dealing damage.
+                if (lastKnownTargetHealth == targetGardener.health) {
+                    Direction skirtDir = dir.rotateRightRads(Navigation.QUARTER_TURN);
+                    if (rc.canMove(skirtDir))
+                        rc.move(skirtDir);
                 }
 
-                // Finally, move in the correct direction
-                if (dir != null && Navigation.tryMoveInDirection(dir)) {
+                lastKnownTargetHealth = targetGardener.health;
+                dir = rc.getLocation().directionTo(targetGardener.location);
+
+                // If can fire shot, then fire.
+                if (rc.canFireSingleShot()) {
+                    rc.fireSingleShot(dir);
                     return true;
                 }
+            } else {
+                Navigation.tryMoveInDirection(dir);
+                return true;
             }
         }
 
-        return true;
+        return false;
+    }
+
+    private static void resetTargetGardener() {
+        targetGardener = null;
+        lastKnownTargetHealth = -1;
     }
 
     private static double targetScore(RobotInfo r) {
