@@ -71,39 +71,6 @@ final strictfp class BotArchon extends Navigation {
 
     }
 
-    private static boolean tryDonateBullets() throws GameActionException {
-       float n;
-       float teamBullets = rc.getTeamBullets();
-       int victoryPoints = rc.getTeamVictoryPoints();
-
-       // Try for instant win
-       if (teamBullets / 10 + victoryPoints >= VICTORY_POINTS_TO_WIN) {
-           rc.donate(teamBullets);
-           return true;
-       }
-
-       if (robotCount < 7 && roundNum > 900)
-           n = teamBullets;  // pray for generosity
-       if (roundLimit - roundNum < 5)
-           n = teamBullets;  // transfer all bullets at last instant
-       else if (roundLimit - roundNum < 50)
-           n = .33f * teamBullets;
-       else if (roundLimit - roundNum < 100)
-           n =.2f * teamBullets;
-       else if (roundNum > 200)
-           n = .05f * teamBullets; // nest egg
-       else
-           n = 0; // too soon for charity
-
-        int donation = (int) (n / 10) * 10;
-
-        if (donation == 0)
-            return false;
-
-        rc.donate(donation);
-        return true;
-    }
-
     private static boolean tryHireGardener() throws GameActionException {
         if (!rc.hasRobotBuildRequirements(GARDENER) || roundNum % 30 != 1) {
             return false;

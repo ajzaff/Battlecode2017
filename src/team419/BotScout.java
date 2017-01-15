@@ -2,6 +2,7 @@ package team419;
 
 import battlecode.common.*;
 
+import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
 import static battlecode.common.RobotType.GARDENER;
 import static battlecode.common.Team.NEUTRAL;
 
@@ -37,6 +38,7 @@ final strictfp class BotScout extends Navigation {
     }
 
     private static void act() throws GameActionException {
+        tryDonateBullets();
         GameState.senseNearbyTrees();
         GameState.senseNearbyEnemies();
         tryShakeNearbyTree();
@@ -97,11 +99,12 @@ final strictfp class BotScout extends Navigation {
             if (!foundSameGardener) {
                 resetTargetGardener();
             }
+        } else {
+            resetTargetGardener();
         }
 
         if (targetGardener != null) {
 
-            rc.setIndicatorDot(targetGardener.location, 255, 0, 0);
             dir = myLoc.directionTo(targetGardener.location);
 
             // Can't occupy same location as target gardener!
@@ -141,35 +144,5 @@ final strictfp class BotScout extends Navigation {
     private static void resetTargetGardener() {
         targetGardener = null;
         lastKnownTargetHealth = -1;
-    }
-
-    private static double targetScore(RobotInfo r) {
-        double v;
-
-        switch (r.type) {
-        case GARDENER:
-            v = 5 * (1 - r.health / r.type.maxHealth);
-            break;
-        case ARCHON:
-            v = .9 * (1 - r.health / r.type.maxHealth);
-            break;
-        case SOLDIER:
-            v = 1 * (1 - r.health / r.type.maxHealth);
-            break;
-        case LUMBERJACK:
-            v = .8 * (1 - r.health / r.type.maxHealth);
-            break;
-        case TANK:
-            v = 1 * (1 - r.health / r.type.maxHealth);
-            break;
-        case SCOUT:
-            v = .7 * (1 - r.health / r.type.maxHealth);
-            break;
-        default:
-            v = 0;
-        }
-        if (r.team == myTeam)
-            v *= -1;
-        return v;
     }
 }

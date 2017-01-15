@@ -2,6 +2,8 @@ package team419;
 
 import battlecode.common.*;
 
+import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
+
 strictfp class GameState {
 
     // constants
@@ -68,5 +70,22 @@ strictfp class GameState {
 
     static void senseNearbyEnemies() {
         nearbyEnemies = rc.senseNearbyRobots(sensorRadius, theirTeam);
+    }
+
+    static boolean tryDonateBullets() throws GameActionException {
+        float teamBullets = rc.getTeamBullets();
+
+        // Try for instant win
+        if (teamBullets / 10 + rc.getTeamVictoryPoints() >= VICTORY_POINTS_TO_WIN) {
+            rc.donate(teamBullets);
+            return true;
+        }
+
+        // If it's a close call - donate all!
+        if (rc.getRoundLimit() - roundNum < 50) {
+            rc.donate(teamBullets);
+        }
+
+        return false;
     }
 }

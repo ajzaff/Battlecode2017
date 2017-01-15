@@ -34,6 +34,7 @@ final strictfp class BotSoldier extends Navigation {
     }
 
     private static void act() throws GameActionException {
+        tryDonateBullets();
         GameState.senseNearbyTrees();
         GameState.senseNearbyEnemies();
         tryShakeNearbyTree();
@@ -129,7 +130,7 @@ final strictfp class BotSoldier extends Navigation {
 
                     for (RobotInfo r : friends)
                         if (r.type == LUMBERJACK)
-                            friendLoc = friendLoc.add(myLoc.directionTo(r.location));
+                            friendLoc = friendLoc.add(myLoc.directionTo(friendLoc));
 
                     dir = friendLoc.directionTo(myLoc);
                     if (dir != null) {

@@ -4,6 +4,7 @@ import battlecode.common.*;
 import battlecode.world.GameStats;
 
 import static battlecode.common.GameConstants.LUMBERJACK_STRIKE_RADIUS;
+import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
 import static battlecode.common.RobotType.LUMBERJACK;
 import static battlecode.common.Team.NEUTRAL;
 
@@ -35,6 +36,7 @@ final strictfp class BotLumberjack extends Navigation {
     }
 
     private static void act() throws GameActionException {
+        tryDonateBullets();
         GameState.senseNearbyTrees();
         GameState.senseNearbyEnemies();
         GameState.senseNearbyFriends();

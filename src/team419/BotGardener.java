@@ -3,6 +3,7 @@ package team419;
 import battlecode.common.*;
 import battlecode.common.RobotType;
 
+import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
 import static battlecode.common.RobotType.*;
 import static battlecode.common.Team.NEUTRAL;
 
@@ -34,6 +35,7 @@ final strictfp class BotGardener extends Navigation {
     }
 
     private static void act() throws GameActionException {
+        tryDonateBullets();
         tryBuildRobot();
         GameState.senseNearbyTrees();
         GameState.senseNearbyFriends();
