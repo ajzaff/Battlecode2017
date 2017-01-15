@@ -2,7 +2,12 @@ clean:
 	bash gradlew clean
 run:
 	bash gradlew run
+cleanSim:
+	rm -rf logs/
+	rm -rf matches/
+	rm -rf reports/
 sim: \
+	cleanSim \
 	play \
 	report \
 	archive
