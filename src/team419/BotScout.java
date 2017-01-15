@@ -5,6 +5,7 @@ import battlecode.common.*;
 import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
 import static battlecode.common.RobotType.GARDENER;
 import static battlecode.common.Team.NEUTRAL;
+import static team419.FastMath.rand;
 
 final strictfp class BotScout extends Navigation {
 
@@ -17,8 +18,8 @@ final strictfp class BotScout extends Navigation {
     @SuppressWarnings("InfiniteLoopStatement")
     static void loop() {
         FastMath.initRand(rc);
-        exploreDir = Navigation.getRandomDirection();
-        rotateRandomness = FastMath.rand() % 2 == 0? 1 : -1;
+        exploreDir = myLoc.directionTo(theirInitArchonLocs[rand() % theirInitArchonLocs.length]);
+        rotateRandomness = rand() % 2 == 0? 1 : -1;
 
         while (true) {
             int begin = rc.getRoundNum();

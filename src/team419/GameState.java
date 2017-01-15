@@ -14,6 +14,9 @@ strictfp class GameState {
     static RobotType myType;
     static int myId;
     static int roundLimit;
+    static MapLocation[] myInitArchonLocs;
+    static MapLocation[] theirInitArchonLocs;
+    static float myStride;
 
     static MapLocation myLoc;
     static int roundNum;
@@ -28,13 +31,16 @@ strictfp class GameState {
     static void init(RobotController rc) {
         GameState.rc = rc;
         myTeam = rc.getTeam();
-        theirTeam = rc.getTeam().opponent();
+        theirTeam = myTeam.opponent();
         myType = rc.getType();
         myLoc = rc.getLocation();
         myId = rc.getID();
         sensorRadius = myType.sensorRadius;
         roundLimit = rc.getRoundLimit();
         age = 1;
+        myInitArchonLocs = rc.getInitialArchonLocations(myTeam);
+        theirInitArchonLocs = rc.getInitialArchonLocations(theirTeam);
+        myStride = myType.strideRadius;
     }
 
     static void update() {
