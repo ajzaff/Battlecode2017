@@ -1,10 +1,8 @@
 package team419;
 
 import battlecode.common.*;
-import battlecode.world.GameStats;
 
 import static battlecode.common.GameConstants.LUMBERJACK_STRIKE_RADIUS;
-import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
 import static battlecode.common.RobotType.LUMBERJACK;
 import static battlecode.common.Team.NEUTRAL;
 

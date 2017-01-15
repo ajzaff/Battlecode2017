@@ -1,9 +1,9 @@
 package safearchon;
 
 import battlecode.common.*;
-import battlecode.common.RobotType;
 
-import static battlecode.common.RobotType.*;
+import static battlecode.common.RobotType.GARDENER;
+import static battlecode.common.RobotType.LUMBERJACK;
 import static battlecode.common.Team.NEUTRAL;
 
 final strictfp class BotGardener extends Navigation {

@@ -2,7 +2,6 @@ package team419;
 
 import battlecode.common.*;
 
-import static battlecode.common.GameConstants.VICTORY_POINTS_TO_WIN;
 import static battlecode.common.RobotType.GARDENER;
 import static battlecode.common.Team.NEUTRAL;
 import static team419.FastMath.rand;

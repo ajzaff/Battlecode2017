@@ -2,7 +2,6 @@ package safearchon;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
 
 import static safearchon.FastMath.*;
 
